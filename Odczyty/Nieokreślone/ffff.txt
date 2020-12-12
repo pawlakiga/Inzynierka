@@ -1,0 +1,4 @@
+
+
+1. Zastosować filtr dolnoprzepustowy 
+2. Problem identyfikacji, który obrót jest najbardziej wymiernym wskaźnikiem zmęczenia 
