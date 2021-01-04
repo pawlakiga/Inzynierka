@@ -49,6 +49,7 @@ for i = (range + 1) :1: length(values)
                    ends(repCount) = s+ends(repCount-1)-starts(repCount-1) ; 
                    repCount = repCount + 1; 
                    starts(repCount) = ends(repCount-1)+1;     
+                   break
                 end
             end
             end

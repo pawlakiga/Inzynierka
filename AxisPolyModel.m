@@ -8,8 +8,10 @@ classdef AxisPolyModel
         sourceXCorr
         sourceLength 
         axis
+        degree
         range
         epsilon
+        
     end
     
     methods
@@ -23,6 +25,7 @@ classdef AxisPolyModel
             obj.range = range ;
             obj.epsilon = epsilon ;  
             obj.axis = axis; 
+            obj.degree = degree;
         end
         
         function [modelValues] = evalPoly(obj,values)
