@@ -171,3 +171,10 @@ matlab2tikz(strcat('Wykresy/3/Tikz_',exercise,'_reps','.tex'))
 saveas(fig,strcat('Wykresy/3/',exercise,'__reps','.pdf'))
 
 %% 
+
+
+
+
+
+
+

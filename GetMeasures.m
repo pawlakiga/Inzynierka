@@ -2,16 +2,16 @@ clear;
 clear port; 
 
 today = date; 
-exercise_name = 'E3';
-subject = 'Iga';
+exercise_name = 'E1';
+subject = 'Ewelina';
 measure_type = 'Gyro'; 
 mkdir(strcat('Odczyty/',exercise_name,'/',subject,'/' , today))
-measuring = '_2'; 
+measuring = '_3'; 
 filename = strcat('Odczyty/',exercise_name,'/',subject,'/' , today , '/', measure_type , measuring , '.txt'); 
 
 port = serialport("COM5",115200);  
 %total time in seconds
-totalTime = 2000;
+totalTime = 1200;
 
 values = zeros(totalTime,3); 
 angles = zeros(totalTime,3);
@@ -38,14 +38,14 @@ for i = 1 : totalTime*100
 % drawnow 
 end 
 %%
-saveValues(values(1:i,:),filename)  
+saveValues(values,filename)  
 %%
 figure
-plot(values(1:i,:));
+plot(values);
 %%
 for k = 1 : 3
 figure
-plot(lowpass(values(1:i,k),0.01,200));
+plot(lowpass(values(:,k),0.01,200));
 end
 legend('X','Y','Z')
 %% 

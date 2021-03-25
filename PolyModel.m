@@ -4,16 +4,26 @@ classdef PolyModel
         xPolyModel
         yPolyModel
         zPolyModel
+        sourceXCorr
+        sourceLength 
+        degrees
+        range
+        epsilon
     end
     
     methods
-        function obj = PolyModel(values,degrees)
+        function obj = PolyModel(values,degrees,range, epsilon)
             % values - vector of values for all axes
             % degrees 3x1 vector of polynomial degrees for each axis
             
-            obj.xPolyModel = AxisPolyModel(values(1:end,1),degrees(1)); 
-            obj.yPolyModel = AxisPolyModel(values(1:end,2),degrees(2)); 
-            obj.zPolyModel = AxisPolyModel(values(1:end,3),degrees(3)); 
+            obj.xPolyModel = AxisPolyModel(values(1:end,1),1,degrees(1),range, epsilon); 
+            obj.yPolyModel = AxisPolyModel(values(1:end,2),2,degrees(2),range, epsilon); 
+            obj.zPolyModel = AxisPolyModel(values(1:end,3),3,degrees(3),range, epsilon); 
+            
+            obj.sourceLength = length(values); 
+            obj.range = range ;
+            obj.epsilon = epsilon ;  
+            obj.degrees = degrees;
          
         end
        

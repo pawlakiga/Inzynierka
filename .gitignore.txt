@@ -1,0 +1,5 @@
+Wykresy
+**.tex
+**.jpg
+**.png
+**.fig

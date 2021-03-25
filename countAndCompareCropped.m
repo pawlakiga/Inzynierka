@@ -1,9 +1,7 @@
-function [starts,ends] = countAndCompareCropped(values, polyModel, minLength, maxLength, minxcmax)
+function [starts,ends,xcorrs] = countAndCompareCropped(values, polyModel, minLength, maxLength, minxcmax)
 
 %
 repCount = 1 ; 
-range = polyModel.range ; 
-epsilon = polyModel.epsilon ; 
 testValues = values(:,polyModel.axis);
 xcMax = 0; 
 XCMAX = 0 ; 
@@ -11,7 +9,8 @@ starts(1) = 1;
 ends(1) = 1 ; 
 decrease = 0; 
 s = 0 ; 
-
+rc = 1; 
+% figure
 for i = round(minLength)+1 : length(values)
     if i < s 
         continue 
@@ -25,9 +24,41 @@ for i = round(minLength)+1 : length(values)
 %             plot(xc);
 %             axis([0 length(xc) -1 1])
 %             drawnow;
-%             plot(potentialRep); hold on; plot(polyRep); hold off;
-%             axis([1 maxLength min(min(potentialRep),min(polyRep))-20 max(max(potentialRep),max(polyRep))+20])
-%             drawnow
+%     if i > max(i-round(maxLength),ends(max(1,repCount-1))) + 150 && i > 350
+%      subplot(2,1,1)
+%         if i > 200
+%          plot(i-200:i,testValues(i-200:i)); hold on; plot(j:i,polyRep); hold off
+%          axiss = gca; 
+%          axiss.XAxis.Limits = [i-200 i];
+%          axiss.YAxis.Limits = [min(testValues)-10 max(testValues)+10]; 
+%         if rc < repCount 
+%             x = [axiss.XAxis.Limits(1) axiss.XAxis.Limits(2) axiss.XAxis.Limits(2) axiss.XAxis.Limits(1)];
+%             y = [axiss.YAxis.Limits(1),axiss.YAxis.Limits(1),axiss.YAxis.Limits(2),axiss.YAxis.Limits(2)];
+%             patch(x,y,[.91, .95,.83]); hold on;
+%             plot(i-150:i,testValues(i-200:i),'b'); hold on; plot(j:i,polyRep,'r'); hold off;         
+%     %     end
+%         end
+%         drawnow
+%         end
+%     
+%     xlabel('Numer próbki'); 
+%     ylabel('Prêdkoœæ k¹towa'); 
+%     title('Zliczanie powtórzeñ')
+%     subplot(2,1,2) 
+%     plot((-length(xc)/2+0.5):(length(xc)/2-0.5),xc); 
+%     title('Korelacja wzajemna');
+%     xlabel('Przesuniêcie'); ylabel('Korelacja'); 
+%     axiss = gca ; 
+%     axiss.XAxis.Limits = [-length(xc)/2+0.5 length(xc)/2-0.5]; 
+%     drawnow
+%     saveas(gcf,sprintf('Wykresy/GIF2/%d_%d.jpg',i,j));
+%     end
+%     
+%         plot(potentialRep); hold on; plot(polyRep);hold off 
+%         a = gca ; 
+%         a.XAxis.Limits = [j i]; 
+%         a.YAxis.Limits = [-200 200];
+%         drawnow
         if xcmaxindex == length(xc)/2+0.5 && xcmax > minxcmax
             if xcmax > xcMax 
                 xcMax = xcmax ; 
@@ -36,6 +67,8 @@ for i = round(minLength)+1 : length(values)
             end
         end
     end
+   
+    
     if xcMax > XCMAX 
         XCMAX = xcMax; 
         IMAX = imax; 
@@ -58,20 +91,28 @@ for i = round(minLength)+1 : length(values)
         s = i + minLength;
     end
     imax= 0 ; jmax= 0 ; xcMax = 0;
+    
+    rc = repCount ; 
 end
 %%
+xcorrs = zeros(length(starts),1);
+if length(starts) > 1
 for k = 1 : length(starts)
-
 plot(testValues(starts(k):ends(k)))
 hold on
 plot(poly1.evalPoly(testValues(starts(k):ends(k))))
 hold off 
 xcor = xcorr(testValues(starts(k):ends(k)),poly1.evalPoly(testValues(starts(k):ends(k))),'normalized');
-plot(xcor);
+% plot(xcor);
 xcorrs(k) = max(xcor); 
-title(sprintf('Powtórzenie %d',k))
+% title(sprintf('Powtórzenie %d',k))
 end
-%%
+%
 figure
 stairs(xcorrs)
+end
+
+
+
+
 end

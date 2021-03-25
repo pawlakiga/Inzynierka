@@ -30,7 +30,7 @@ for range = ranges
             lengths = e - s ; 
             varr = var(lengths); 
             if varr < minVar 
-%                 figuresForGetReps(modelValues,s,e,range,epsilon,varr,1);
+%                 figuresForGetReps(modelValues,s,e,range,epsilon,varr,0);
                 minVar = varr; 
                 starts = s; 
                 ends = e ; 
