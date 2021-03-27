@@ -20,4 +20,11 @@ polyModel = PolyModel(modelRepCropped, degrees, bestRange, bestEpsilon) ;
 
 accuracy = 1 - abs(length(s) - testRepsNo)/testRepsNo; 
 
+figure
+plot(allTestValues) ; 
+for r = 1 : length(s) 
+    xline(s(r),'g') ; 
+    xline(e(r),'r'); 
+end
+
 end

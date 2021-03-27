@@ -6,6 +6,7 @@ testValues = values;
 xcMax = zeros(1,3); 
 xcmax = zeros(1,3); 
 xcmaxindex = zeros(1,3);
+minxcmaxs = zeros(3,1); 
 XCMAX = zeros(1,3) ; 
 
 decrease = 0; 
@@ -22,13 +23,20 @@ for i = round(minLength)+1 : length(values)
     if i < s 
         continue 
     end
+    if i == 450 
+        pppp = 1 ; 
+    end
     for j = max(i-round(maxLength),ends(max(1,repCount-1))):i - round(minLength)    
         
-        potentialRep = testValues(j:i,:); 
+         potentialRep = testValues(j:i,:); 
          polyRep = polyModel.evalPoly(potentialRep); 
+         shifts = zeros(1,3); 
         for ax = 1 : 3
-            xc = xcorr(potentialRep(:,ax),polyRep(:,ax)); 
+            xc = xcorr(potentialRep(:,ax),polyRep(:,ax));
+            autoxc = xcorr(polyRep(:,ax),polyRep(:,ax)); 
              [xcmax(ax),xcmaxindex(ax)] = max(xc); 
+             shifts(ax) = xcmaxindex(ax) - length(xc)/2 - 0.5 ; 
+             minxcmaxs(ax) = minxcmax(ax) * max(autoxc); 
 %             if ~(abs(xcmaxindex(ax) - length(xc)/2+0.5) < 0.01*length(xc) && xcmax(ax) > minxcmax)
 %                 break
 %             else 
@@ -41,19 +49,45 @@ for i = round(minLength)+1 : length(values)
 %                 end
 %             end
 
-    
+            
         end
-        
-        if abs(xcmaxindex(1) - length(xc)/2+0.5) < 0.05*length(xc) && xcmax(1) > minxcmax(1) && ...
-            abs(xcmaxindex(2) - length(xc)/2+0.5) < 0.01*length(xc) && xcmax(2) > minxcmax(2) && ...
-            abs(xcmaxindex(3) - length(xc)/2+0.5) < 0.01*length(xc) && xcmax(3) > minxcmax(3)
-            if sum(xcmax) > sum(xcMax) 
-%             if xcmax(1) > xcMax(1) && xcmax(2) > xcMax (2) && xcmax(3) > xcMax(3)
+%         plot(j:i,potentialRep);
+%         a = gca ; 
+%         a.XAxis.Limits = [j i]; 
+%         a.YAxis.Limits = [-200 200];
+%         hold on; plot(j:i,polyRep);
+%         hold off 
+%         drawnow
+        if mean(shifts * [xcmax(1)/max(xcmax); xcmax(2)/max(xcmax); xcmax(3)/max(xcmax)]) < 0.03 * length(xc)
+% if abs(shifts(1)) < 0.05 * length(xc) && abs(shifts(2)) < 0.05 * length(xc) && abs(shifts(3))<  0.05 *  length(xc)
+%             if xcmax(1) > minxcmaxs(1) && ...
+%                xcmax(2) > minxcmaxs(2) && ... 
+%                xcmax(3) > minxcmaxs(3) && ... 
+%                sum(xcmax) > sum(xcMax)
+            if sum(xcmax) > sum(minxcmaxs) && sum(xcmax) > sum(xcMax) 
+               
                 xcMax = xcmax ; 
                 imax = i; 
                 jmax = j ; 
             end
+        else 
+            s = i + min(shifts) * 0.8; 
+            continue 
         end
+        
+        
+%         if abs(xcmaxindex(1) - length(xc)/2+0.5) < 0.05*length(xc) && xcmax(1) > minxcmax(1) && ...
+%             abs(xcmaxindex(2) - length(xc)/2+0.5) < 0.01*length(xc) && xcmax(2) > minxcmax(2) && ...
+%             abs(xcmaxindex(3) - length(xc)/2+0.5) < 0.01*length(xc) && xcmax(3) > minxcmax(3)
+%             if sum(xcmax) > sum(xcMax) 
+% %             if xcmax(1) > xcMax(1) && xcmax(2) > xcMax (2) && xcmax(3) > xcMax(3)
+%                 xcMax = xcmax ; 
+%                 imax = i; 
+%                 jmax = j ; 
+%             end
+%         else 
+            
+%         end
 %         plot(j:i,potentialRep);
 %         a = gca ; 
 %         a.XAxis.Limits = [j i]; 
@@ -91,6 +125,7 @@ for i = round(minLength)+1 : length(values)
         
     end
     imax= 0 ; jmax= 0 ; xcMax = zeros(1,3);
+   
 end
 
 starts = starts(1:repCount-1); ends = ends(1:repCount-1); 
