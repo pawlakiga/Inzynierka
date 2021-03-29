@@ -4,7 +4,7 @@ degrees = [8,14,6;
 
 cropParams = [0.9,0.7,0.7]; 
 
-minxcmaxs = [0.5, 0.6, 0.9; 0.4, 0.6, 0.8; 0.3, 0.5, 0.9] ;
+minxcmaxs = [0.5, 0.6, 0.9; 0.2, 0.2, 0.6; 0.3, 0.3, 0.9] ;
 
 
 xcorrs = zeros(220,3,3); 
@@ -12,7 +12,7 @@ starts = zeros(220,3) ;
 ends = zeros(220,3);
 acc = zeros(1,3); 
 
-for i = 2 : 3
+for i = 2 : 2
     
     if i == 1 
         [mV,tV,mRN,tRN,d,cP,a] = valuesAndParamsBank('E1','Iga') ;
