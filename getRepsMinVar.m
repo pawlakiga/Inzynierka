@@ -18,19 +18,11 @@ for range = ranges
     for epsilon = epsilons 
         [s,e] = getReps(modelValues,range,epsilon);
         [s,e] = deleteNoiseReps(s,e);
-        
-%         lengths = e - s ; 
-%         varr = var(lengths); 
-%         if varr > 2000
-%              figuresForGetReps(modelValues,s,e,range,epsilon,varr,1);
-%         end
-        
-        
+          
         if length(e) == repsNo
             lengths = e - s ; 
             varr = var(lengths); 
             if varr < minVar 
-%                 figuresForGetReps(modelValues,s,e,range,epsilon,varr,0);
                 minVar = varr; 
                 starts = s; 
                 ends = e ; 
@@ -40,7 +32,5 @@ for range = ranges
         end
     end
 end
-
-
 
 end

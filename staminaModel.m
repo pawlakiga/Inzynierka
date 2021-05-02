@@ -1,6 +1,23 @@
-% Skrypt do budowy modelu zmeczenia na podstawie 
+% Skrypt do budowy modelu zmeczenia 
 
-i = 1 ; 
+i = 2 ; 
+minLength = 0.7 ; maxLength = 1.5; 
+
+if i == 1 
+    [mV,tV,mRN,tRN,d,cP,a] = valuesAndParamsBank('E1','Iga2') ;
+else 
+    if i == 2
+        [mV,tV,mRN,tRN,d,cP,a] = valuesAndParamsBank('E2','Iga2') ;
+    else 
+        [mV,tV,mRN,tRN,d,cP,a] = valuesAndParamsBank('E3','Iga') ;
+    end
+end
+
+[ac,xcorrs1,xcorrs2,starts,ends]= getAccuracy(mV,tV,mRN,tRN,d,cP,a,minLength,maxLength); 
+drawApproximation(xcorrs1); 
+drawApproximation(xcorrs2); 
+%%
+i = 2 ; 
 minLength = 0.7 ; maxLength = 1.5; 
 
 if i == 1 
@@ -13,12 +30,50 @@ else
     end
 end
 
-[ac,xcorrs]= getAccuracy(mV,tV,mRN,tRN,d,cP,a,minLength,maxLength); 
-%%
+
+[ac,xcorrs1,xcorrs2,starts,ends]= getAccuracy(mV,tV,mRN,tRN,d,cP,a,minLength,maxLength);
+drawApproximation(xcorrs1); 
+drawApproximation(xcorrs2); 
+
+
+
+
 
 %%
-xcorrsB = xcorrs ; 
-xcorrs = xcorrs(1:193); 
+[as11,min11] = squareApproximation(xcorrs1(:,1),0); 
+subplot(3,1,1)
+stairs(xcorrs1(:,1)); 
+hold on 
+plot(as11); 
+title(sprintf('Oœ X, E = %2f',min11))
+[as12, min12] = squareApproximation(xcorrs1(:,2),0);
+subplot(3,1,2)
+stairs(xcorrs1(:,2)); 
+hold on 
+plot(as12); 
+title(sprintf('Oœ Y, E = %2f',min12))
+[as13, min13] = squareApproximation(xcorrs1(:,3),0);
+subplot(3,1,3)
+stairs(xcorrs1(:,3)); 
+hold on 
+plot(as13); 
+title(sprintf('Oœ Z, E = %2f',min13)); 
+
+
+
+as21 = squareApproximation(xcorrs2(:,1),0); 
+as22 = squareApproximation(xcorrs2(:,2),0);
+as23 = squareApproximation(xcorrs2(:,3),0);
+
+%% 
+for r = 1 : length(starts) 
+    plot(tV(starts(r):ends(r),3));
+    hold on
+end
+
+%%
+% xcorrsB = xcorrs ; 
+% xcorrs = xcorrs(1:193); 
 %%
 t1 = 0; 
 t2 = round(length(xcorrs)/2); 
@@ -37,7 +92,7 @@ G = @(t) h-f*tx2^8+f*(t-t2-tx2)^8;
 bmin = 1e-17; bmax = 2e-16; bstep = 1e-17; 
 fmin = 1e-18; fmax = 2e-17; fstep = 1e-18; 
 gmin = 1e-17; gmax = 2e-16; gstep = 1e-17; 
-t2min = round(length(xcorrs)/2); t2max = length(xcorrs)-1;
+t2min = round(length(xcorrs)/3); t2max = length(xcorrs)-1;
 
 blength = length(bmin:bstep:bmax) ; 
 flength = length(fmin:fstep:fmax) ; 
@@ -151,7 +206,7 @@ drawnow
 % %aproksymacja funkcj¹ kwadratow¹ 
 % J = @(t) h - n.*(t-t2).^2 ; 
 
-nmin = 0.000001; nmax = 0.00001; nstep = 0.000001; 
+nmin = 0.000001; nmax = 0.001; nstep = 0.000001; 
 nlength = length(nmin:nstep:nmax); 
 
 
@@ -162,7 +217,7 @@ call = 0 ;
 for n = nmin : nstep : nmax  
     for t2 = t2min : t2max
         h = xcorrs(t2); 
-        % aproksymacja funkcj¹ wyk³adnicz¹ 
+        % aproksymacja funkcj¹ kwadratow¹ 
         J = @(t) h - n.*(t-t2).^2 ; 
         Fprim = ones(t2-1,1)*h;         
         approxS(t1+1:t2-1) = Fprim; 
@@ -170,9 +225,11 @@ for n = nmin : nstep : nmax
         
         call = call + 1 ; 
         paramsS(call,:) = [n,t2]; ES(call) = (approxS-xcorrs)'*(approxS-xcorrs);
-%         stairs(xcorrs,'b'); hold on 
-%         plot(approxS,'r'); hold off
-%         drawnow
+        stairs(xcorrs,'b'); hold on 
+%         title(sprintf('t2 = %d, '))
+        plot(approxS,'r'); hold off
+        
+        drawnow
 %                
     end
 end
@@ -207,19 +264,19 @@ plot(approx); hold on ; stairs(xcorrs);
 title(sprintf('Przybli¿enie wielomianem 8 stopnia  E = %g',m))
 
 %% 
-figure
-for i = 1 : 96 : 767912
-b = params(i,1) ; f = params(i,3); g = params(i,3); t2 = params(i,4);
-t2 = 94;
-F = @(t) e - d.*(t-t1);
-h = xcorrs(t2); 
-G = @(t) h-(-f*tx2^8+f*(t-t2-tx2).^8); 
-
-Fprim = ones(t2-1,1)*h;
-approx(t1+1:t2-1) = F(t1+1:t2-1);                 
-approx(t1+1:t2-1) = Fprim; 
-approx(t2:end) = G(t2:length(xcorrs)); 
-plot(approx); hold on ; stairs(xcorrs); hold off
-
-end
+% figure
+% for i = 1 : 96 : 767912
+% b = params(i,1) ; f = params(i,3); g = params(i,3); t2 = params(i,4);
+% t2 = 94;
+% F = @(t) e - d.*(t-t1);
+% h = xcorrs(t2); 
+% G = @(t) h-(-f*tx2^8+f*(t-t2-tx2).^8); 
+% 
+% Fprim = ones(t2-1,1)*h;
+% approx(t1+1:t2-1) = F(t1+1:t2-1);                 
+% approx(t1+1:t2-1) = Fprim; 
+% approx(t2:end) = G(t2:length(xcorrs)); 
+% plot(approx); hold on ; stairs(xcorrs); hold off
+% 
+% end
 

@@ -6,15 +6,15 @@ exercise_name = 'E1';
 subject = 'Ewelina';
 measure_type = 'Gyro'; 
 mkdir(strcat('Odczyty/',exercise_name,'/',subject,'/' , today))
-measuring = '_3'; 
+measuring = '_2'; 
 filename = strcat('Odczyty/',exercise_name,'/',subject,'/' , today , '/', measure_type , measuring , '.txt'); 
 
 port = serialport("COM5",115200);  
 %total time in seconds
-totalTime = 1200;
+totalTime = 300;
 
-values = zeros(totalTime,3); 
-angles = zeros(totalTime,3);
+values = zeros(totalTime*100,3); 
+angles = zeros(totalTime*100,3);
 
 data = strings(totalTime,1); 
 test = readline(port); 
@@ -38,14 +38,14 @@ for i = 1 : totalTime*100
 % drawnow 
 end 
 %%
-saveValues(values,filename)  
+saveValues(values(1:i,:),filename)   
 %%
 figure
-plot(values);
+plot(values(1:i,:));
 %%
 for k = 1 : 3
 figure
-plot(lowpass(values(:,k),0.01,200));
+plot(lowpass(values(1:i,k),0.01,200));
 end
 legend('X','Y','Z')
 %% 
